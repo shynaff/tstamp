@@ -25,18 +25,25 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get('/api/:dat', (req, res)=>{
-  let stamp;
+  let stamp, utc, result;
   if(Date.parse(req.params.dat)){
     stamp = Date.parse(req.params.dat);
+    utc =new Date(stamp).toUTCString();
+    result = {'unix':stamp, 'utc':utc};
   }else 
-  if(new Date(req.params.dat)){
+  if(/\d+/.test(req.params.dat)&&req.params.dat.length==13){
     stamp = parseFloat(req.params.dat);
-  }else 
-  if(error)return res.send({ error : "Invalid Date" });
-  let utc =new Date(stamp).toUTCString();
-  let result = {'unix':stamp, 'utc':utc};
+    utc =new Date(stamp).toUTCString();
+    result = {'unix':stamp, 'utc':utc};
+  }else result = { error : "Invalid Date" };
   res.send(result);
 });
+
+app.get("/api", function (req, res) {
+  let curTime = new Date();
+  res.send({"unix":Date.parse(curTime),"utc":curTime.toUTCString()});
+});
+
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
