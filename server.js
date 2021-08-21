@@ -31,7 +31,8 @@ app.get('/api/:dat', (req, res)=>{
   }else 
   if(new Date(req.params.dat)){
     stamp = parseFloat(req.params.dat);
-  };
+  }else 
+  if(error)return res.send({ error : "Invalid Date" });
   let utc =new Date(stamp).toUTCString();
   let result = {'unix':stamp, 'utc':utc};
   res.send(result);
