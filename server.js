@@ -32,12 +32,14 @@ app.get('/api/:dat', (req, res)=>{
   if(new Date(req.params.dat)){
     stamp = parseFloat(req.params.dat);
   };
-  let utc =new Date(stamp).toUTCString();
-  let result = {'unix':stamp, 'utc':utc};
-  res.send((err, res)=>{
-    if (err) return {error:'invali Date'};
-    return res=result;
-  })
+  
+  const result = (err) => {
+    let utc =new Date(stamp).toUTCString();
+    if(err)return {error:'invali Date'};
+    return {'unix':stamp, 'utc':utc};
+  };
+  
+  res.send(result);
 });
 
 // listen for requests :)
