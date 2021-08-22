@@ -6,8 +6,7 @@
 const express = require('express'),
       app = express(),
       cors = require('cors'),
-      bodyParser = require('body-parser'), 
-      { json } = bodyParser.json();
+      bodyParser = require('body-parser');
 
 app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
 
@@ -24,25 +23,40 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+//reqheaderjsonparser
+app.get('/api/whoami', (req, res)=>{
+  const x  = {
+  'ipaddress':req.ip,
+  'language':req.header('accept-language'),
+  'software':req.header('user-agent')
+  };
+  res.json(x);
+});
+
+//timestamp
 app.get('/api', (req, res)=>{
   const obj = {'unix': new Date().getTime(), 'utc': new Date().toUTCString()};
   res.send(obj)
 });
-
-app.get('/api/:date?', (req, res)=>{
-  const obj = (y) => {
-    let x;
-    if (Date.parse(y)) {
-      y = Date.parse(y);
-      x = new Date(y);
-    }else if (y.length == 13) {
-      x = new Date(parseFloat(y));
+app.get('/api/:date?', (req, res, next)=>{
+  const obj = (x) => {
+    let resul;
+    if (Date.parse(x)) {
+      y = Date.parse(x);
+      resul = new Date(x);
+    }else if (x.length == 13) {
+      resul = new Date(parseFloat(y));
     };
-    return x?{'unix': x.getTime(), 'utc': x.toUTCString()}:{ error : "Invalid Date" };
+    return resul?
+      {'unix': resul.getTime(), 'utc': resul.toUTCString()}:
+      { error : "Invalid Date" };
   };
 
   res.send(obj(req.params.date));
 });
+
+
+//reqheader-parser
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
